@@ -172,7 +172,7 @@ public class BukkitUtil {
     }
 
     public static boolean isInOnlineMode() {
-        return (Bungee.isEnabled() && Bungee.isOnlineModeEnabled()) || Bukkit.getOnlineMode();
+        return false;
     }
 
     @SuppressWarnings("unchecked")

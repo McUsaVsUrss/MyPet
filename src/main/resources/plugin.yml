@@ -1,8 +1,8 @@
 name: MyPet
 main: de.Keyle.MyPet.MyPetPlugin
-version: ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}
+version: 1.3.0
 author: Keyle
-website: ${project.url}
+website: http://dev.bukkit.org/bukkit-plugins/mypet/
 softdepend: [Vault, Heroes, AncientRPG, BattleArena, Minigames, MobArena, pvparena, Multiverse-Core]
 commands:
   myPet:
