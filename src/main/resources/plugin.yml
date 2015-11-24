@@ -4,6 +4,7 @@ version: 1.3.0
 author: Keyle
 website: http://dev.bukkit.org/bukkit-plugins/mypet/
 softdepend: [Vault, Heroes, AncientRPG, BattleArena, Minigames, MobArena, pvparena, Multiverse-Core, SurvivalGames]
+commands:
   myPet:
     description: Help for all MyPet commands.
   petname:
