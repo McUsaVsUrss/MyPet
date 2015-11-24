@@ -40,6 +40,7 @@ public class CraftMyPet extends CraftCreature implements MyPetEntity {
         petEntity = entityMyPet;
     }
 
+    /*
     @Override
     @Deprecated
     public void _INVALID_damage(int amount) {
@@ -86,6 +87,7 @@ public class CraftMyPet extends CraftCreature implements MyPetEntity {
     @Deprecated
     public void _INVALID_setMaxHealth(int health) {
     }
+    */
 
     public boolean canMove() {
         return petEntity.canMove();
