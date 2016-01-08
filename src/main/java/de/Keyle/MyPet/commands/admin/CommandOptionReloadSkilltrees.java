@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -22,10 +22,9 @@ package de.Keyle.MyPet.commands.admin;
 
 import de.Keyle.MyPet.MyPetPlugin;
 import de.Keyle.MyPet.api.commands.CommandOption;
-import de.Keyle.MyPet.entity.types.InactiveMyPet;
 import de.Keyle.MyPet.entity.types.MyPet;
-import de.Keyle.MyPet.entity.types.MyPetList;
 import de.Keyle.MyPet.entity.types.MyPetType;
+import de.Keyle.MyPet.repository.MyPetList;
 import de.Keyle.MyPet.skill.skills.implementation.ISkillInstance;
 import de.Keyle.MyPet.skill.skilltree.SkillTree;
 import de.Keyle.MyPet.skill.skilltree.SkillTreeMobType;
@@ -63,7 +62,7 @@ public class CommandOptionReloadSkilltrees implements CommandOption {
         SkillTreeLoaderYAML.getSkilltreeLoader().loadSkillTrees(MyPetPlugin.getPlugin().getDataFolder().getPath() + File.separator + "skilltrees", petTypes);
         SkillTreeLoaderJSON.getSkilltreeLoader().loadSkillTrees(MyPetPlugin.getPlugin().getDataFolder().getPath() + File.separator + "skilltrees", petTypes);
 
-        Set<String> skilltreeNames = new LinkedHashSet<String>();
+        Set<String> skilltreeNames = new LinkedHashSet<>();
         for (MyPetType mobType : MyPetType.values()) {
             SkillTreeMobType skillTreeMobType = SkillTreeMobType.getMobTypeByName(mobType.getTypeName());
             SkillTreeLoader.addDefault(skillTreeMobType);
@@ -105,24 +104,6 @@ public class CommandOptionReloadSkilltrees implements CommandOption {
                     }
                 }
             }
-        }
-        for (InactiveMyPet myPet : MyPetList.getAllInactiveMyPets()) {
-            SkillTree skillTree = myPet.getSkillTree();
-            if (skillTree != null) {
-                String skilltreeName = skillTree.getName();
-                if (SkillTreeMobType.getMobTypeByPetType(myPet.getPetType()) != null) {
-                    SkillTreeMobType mobType = SkillTreeMobType.getMobTypeByPetType(myPet.getPetType());
-
-                    if (mobType.hasSkillTree(skilltreeName)) {
-                        skillTree = mobType.getSkillTree(skilltreeName);
-                    } else {
-                        skillTree = null;
-                    }
-                } else {
-                    skillTree = null;
-                }
-            }
-            myPet.setSkillTree(skillTree);
         }
         sender.sendMessage("[" + ChatColor.AQUA + "MyPet" + ChatColor.RESET + "] skilltrees reloaded!");
         DebugLogger.info("Skilltrees reloaded.");

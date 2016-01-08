@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -32,8 +32,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class SkillsInfo {
-    private static Map<Class<? extends SkillTreeSkill>, String> registeredSkillsNames = new HashMap<Class<? extends SkillTreeSkill>, String>();
-    private static Map<String, Class<? extends SkillTreeSkill>> registeredNamesSkills = new HashMap<String, Class<? extends SkillTreeSkill>>();
+    private static Map<Class<? extends SkillTreeSkill>, String> registeredSkillsNames = new HashMap<>();
+    private static Map<String, Class<? extends SkillTreeSkill>> registeredNamesSkills = new HashMap<>();
 
     public static void registerSkill(Class<? extends SkillTreeSkill> clazz) {
         if (!ISkillInfo.class.isAssignableFrom(clazz)) {

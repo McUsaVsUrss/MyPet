@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ public class PartyManager {
                 Heroes heroes = PluginHookManager.getPluginInstance(Heroes.class);
                 Hero heroPlayer = heroes.getCharacterManager().getHero(player);
                 if (heroPlayer.getParty() != null) {
-                    List<Player> members = new ArrayList<Player>();
+                    List<Player> members = new ArrayList<>();
                     for (Hero hero : heroPlayer.getParty().getMembers()) {
                         if (hero.getPlayer().isOnline()) {
                             members.add(hero.getPlayer());
@@ -59,7 +59,7 @@ public class PartyManager {
         if (PluginHookManager.isPluginUsable("mcMMO")) {
             try {
                 if (PartyAPI.inParty(player)) {
-                    List<Player> members = new ArrayList<Player>();
+                    List<Player> members = new ArrayList<>();
                     String partyName = PartyAPI.getPartyName(player);
                     for (Player member : PartyAPI.getOnlineMembers(partyName)) {
                         members.add(member);
@@ -74,7 +74,7 @@ public class PartyManager {
                 ApiManager api = ApiManager.getApiManager();
                 AncientRPGParty party = api.getPlayerParty(player);
                 if (party != null) {
-                    List<Player> members = new ArrayList<Player>();
+                    List<Player> members = new ArrayList<>();
                     for (UUID memberUUID : party.getMembers()) {
                         Player member = Bukkit.getPlayer(memberUUID);
                         if (member.isOnline()) {

@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -23,11 +23,11 @@ package de.Keyle.MyPet.util;
 import java.util.*;
 
 public class WorldGroup {
-    private static Map<String, WorldGroup> allGroups = new HashMap<String, WorldGroup>();
-    private static Map<String, WorldGroup> groupWorlds = new HashMap<String, WorldGroup>();
+    private static Map<String, WorldGroup> allGroups = new HashMap<>();
+    private static Map<String, WorldGroup> groupWorlds = new HashMap<>();
 
     private String name;
-    private List<String> worlds = new ArrayList<String>();
+    private List<String> worlds = new ArrayList<>();
 
 
     public WorldGroup(String groupName) {

@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ package de.Keyle.MyPet.util.locale;
 import java.util.*;
 
 public class ResourceBundle extends java.util.ResourceBundle {
-    private List<java.util.ResourceBundle> extensionBundles = new ArrayList<java.util.ResourceBundle>();
+    private List<java.util.ResourceBundle> extensionBundles = new ArrayList<>();
     private boolean noParent = false;
 
     public ResourceBundle(java.util.ResourceBundle parent) {

@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ public class IconMenuInventory {
             Validate.isTrue(title.length() <= 32, "Title cannot be longer than 32 characters");
             this.items = new IconMenuItem[size];
             this.title = title;
-            this.viewers = new ArrayList<HumanEntity>();
+            this.viewers = new ArrayList<>();
         }
 
         public int getSize() {

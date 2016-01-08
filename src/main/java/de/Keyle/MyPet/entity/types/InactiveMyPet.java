@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ public class InactiveMyPet implements IMyPet, NBTStorage {
     private SkillTree skillTree = null;
     private TagCompound NBTSkills;
     private TagCompound NBTextendetInfo;
-    protected boolean wantsToRespawn = false;
+    public boolean wantsToRespawn = false;
 
     public InactiveMyPet(MyPetPlayer petOwner) throws IllegalArgumentException {
         if (petOwner == null) {
@@ -166,6 +166,10 @@ public class InactiveMyPet implements IMyPet, NBTStorage {
     @Override
     public long getLastUsed() {
         return lastUsed;
+    }
+
+    public void setLastUsed(long lastUsed) {
+        this.lastUsed = lastUsed;
     }
 
     public void setWorldGroup(String worldGroup) {

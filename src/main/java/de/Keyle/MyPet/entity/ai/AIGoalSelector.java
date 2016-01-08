@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -23,9 +23,9 @@ package de.Keyle.MyPet.entity.ai;
 import java.util.*;
 
 public class AIGoalSelector {
-    private Map<String, AIGoal> AIGoalMap = new HashMap<String, AIGoal>();
-    private List<AIGoal> AIGoalList = new LinkedList<AIGoal>();
-    private List<AIGoal> activeAIGoalList = new LinkedList<AIGoal>();
+    private Map<String, AIGoal> AIGoalMap = new HashMap<>();
+    private List<AIGoal> AIGoalList = new LinkedList<>();
+    private List<AIGoal> activeAIGoalList = new LinkedList<>();
 
     public void addGoal(String name, AIGoal myPetAIgoal) {
         if (AIGoalMap.containsKey(name)) {

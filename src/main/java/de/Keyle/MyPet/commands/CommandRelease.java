@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@ import de.Keyle.MyPet.MyPetPlugin;
 import de.Keyle.MyPet.entity.types.IMyPetEquipment;
 import de.Keyle.MyPet.entity.types.MyPet;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
-import de.Keyle.MyPet.entity.types.MyPetList;
 import de.Keyle.MyPet.entity.types.chicken.MyChicken;
 import de.Keyle.MyPet.entity.types.cow.MyCow;
 import de.Keyle.MyPet.entity.types.creeper.MyCreeper;
@@ -44,6 +43,9 @@ import de.Keyle.MyPet.entity.types.slime.MySlime;
 import de.Keyle.MyPet.entity.types.villager.MyVillager;
 import de.Keyle.MyPet.entity.types.wolf.MyWolf;
 import de.Keyle.MyPet.entity.types.zombie.MyZombie;
+import de.Keyle.MyPet.repository.MyPetList;
+import de.Keyle.MyPet.repository.PlayerList;
+import de.Keyle.MyPet.repository.RepositoryCallback;
 import de.Keyle.MyPet.skill.skills.implementation.Inventory;
 import de.Keyle.MyPet.skill.skills.implementation.inventory.CustomInventory;
 import de.Keyle.MyPet.util.BukkitUtil;
@@ -53,7 +55,6 @@ import de.Keyle.MyPet.util.WorldGroup;
 import de.Keyle.MyPet.util.hooks.Permissions;
 import de.Keyle.MyPet.util.locale.Locales;
 import de.Keyle.MyPet.util.logger.DebugLogger;
-import de.Keyle.MyPet.util.player.MyPetPlayer;
 import de.keyle.fanciful.FancyMessage;
 import de.keyle.fanciful.ItemTooltip;
 import net.minecraft.server.v1_8_R3.EntityItem;
@@ -83,12 +84,12 @@ import static org.bukkit.ChatColor.GOLD;
 import static org.bukkit.ChatColor.RESET;
 
 public class CommandRelease implements CommandExecutor, TabCompleter {
-    private static List<String> emptyList = new ArrayList<String>();
+    private static List<String> emptyList = new ArrayList<>();
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player petOwner = (Player) sender;
-            if (MyPetList.hasMyPet(petOwner)) {
+            if (MyPetList.hasActiveMyPet(petOwner)) {
                 MyPet myPet = MyPetList.getMyPet(petOwner);
 
                 if (!Permissions.has(petOwner, "MyPet.user.command.release")) {
@@ -111,7 +112,7 @@ public class CommandRelease implements CommandExecutor, TabCompleter {
                         name += arg;
                     }
                 }
-                if (ChatColor.stripColor(myPet.getPetName()).equalsIgnoreCase(name)) {
+                if (ChatColor.stripColor(myPet.getPetName()).trim().equalsIgnoreCase(name.trim())) {
                     if (myPet.getSkills().isSkillActive(Inventory.class)) {
                         CustomInventory inv = myPet.getSkills().getSkill(Inventory.class).inv;
                         inv.dropContentAt(myPet.getLocation());
@@ -239,16 +240,19 @@ public class CommandRelease implements CommandExecutor, TabCompleter {
                     myPet.getOwner().setMyPetForWorldGroup(WorldGroup.getGroupByWorld(petOwner.getWorld().getName()).getName(), null);
 
                     sender.sendMessage(Util.formatText(Locales.getString("Message.Command.Release.Success", petOwner), myPet.getPetName()));
-                    MyPetList.removeInactiveMyPet(MyPetList.setMyPetInactive(myPet.getOwner()));
-                    DebugLogger.info(sender.getName() + " released pet.");
-                    if (Configuration.STORE_PETS_ON_PET_RELEASE) {
-                        MyPetPlugin.getPlugin().saveData(false, true);
-                    }
+                    MyPetList.deactivateMyPet(myPet.getOwner());
+                    MyPetPlugin.getPlugin().getRepository().removeMyPet(myPet.getUUID(), new RepositoryCallback<Boolean>() {
+                        @Override
+                        public void callback(Boolean value) {
+                            DebugLogger.info(sender.getName() + " released pet.");
+                        }
+                    });
+
                     return true;
                 } else {
                     FancyMessage message = new FancyMessage(Locales.getString("Message.Command.Release.Confirm", petOwner) + " ");
 
-                    List<String> lore = new ArrayList<String>();
+                    List<String> lore = new ArrayList<>();
                     lore.add(RESET + Locales.getString("Name.Hunger", petOwner) + ": " + GOLD + myPet.getHungerValue());
                     if (myPet.getRespawnTime() > 0) {
                         lore.add(RESET + Locales.getString("Name.Respawntime", petOwner) + ": " + GOLD + myPet.getRespawnTime() + "sec");
@@ -277,9 +281,9 @@ public class CommandRelease implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(final CommandSender commandSender, Command command, String s, String[] strings) {
-        if (MyPetList.hasMyPet((Player) commandSender)) {
-            List<String> petnameList = new ArrayList<String>();
-            petnameList.add(MyPetPlayer.getOrCreateMyPetPlayer((Player) commandSender).getMyPet().getPetName());
+        if (MyPetList.hasActiveMyPet((Player) commandSender)) {
+            List<String> petnameList = new ArrayList<>();
+            petnameList.add(PlayerList.getMyPetPlayer((Player) commandSender).getMyPet().getPetName());
             return petnameList;
         }
         return emptyList;

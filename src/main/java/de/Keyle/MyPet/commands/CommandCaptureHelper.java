@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 package de.Keyle.MyPet.commands;
 
+import de.Keyle.MyPet.repository.PlayerList;
 import de.Keyle.MyPet.util.Util;
 import de.Keyle.MyPet.util.hooks.Permissions;
 import de.Keyle.MyPet.util.locale.Locales;
@@ -34,15 +35,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandCaptureHelper implements CommandExecutor, TabCompleter {
-    private static List<String> emptyList = new ArrayList<String>();
+    private static List<String> emptyList = new ArrayList<>();
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
-            MyPetPlayer myPetPlayer = MyPetPlayer.getOrCreateMyPetPlayer(player);
+
 
             if (Permissions.has(player, "MyPet.user.command.capturehelper")) {
+                MyPetPlayer myPetPlayer;
+                if (PlayerList.isMyPetPlayer(player)) {
+                    myPetPlayer = PlayerList.getMyPetPlayer(player);
+                } else {
+                    myPetPlayer = PlayerList.registerMyPetPlayer(player);
+                }
+
                 myPetPlayer.setCaptureHelperActive(!myPetPlayer.isCaptureHelperActive());
                 String mode = myPetPlayer.isCaptureHelperActive() ? Locales.getString("Name.Enabled", player) : Locales.getString("Name.Disabled", player);
                 player.sendMessage(Util.formatText(Locales.getString("Message.Command.CaptureHelper.Mode", player), mode));

@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 package de.Keyle.MyPet.commands;
 
 import de.Keyle.MyPet.entity.types.MyPet;
-import de.Keyle.MyPet.entity.types.MyPetList;
+import de.Keyle.MyPet.repository.MyPetList;
 import de.Keyle.MyPet.skill.skills.implementation.ISkillInstance;
 import de.Keyle.MyPet.util.BukkitUtil;
 import de.Keyle.MyPet.util.Util;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandSkill implements CommandExecutor, TabCompleter {
-    private static List<String> emptyList = new ArrayList<String>();
+    private static List<String> emptyList = new ArrayList<>();
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
@@ -50,13 +50,13 @@ public class CommandSkill implements CommandExecutor, TabCompleter {
                 if (petOwner == null || !petOwner.isOnline()) {
                     sender.sendMessage(Locales.getString("Message.No.PlayerOnline", petOwner));
                     return true;
-                } else if (!MyPetList.hasMyPet(petOwner)) {
+                } else if (!MyPetList.hasActiveMyPet(petOwner)) {
                     sender.sendMessage(Util.formatText(Locales.getString("Message.No.UserHavePet", petOwner), petOwner.getName()));
                     return true;
                 }
             }
 
-            if (MyPetList.hasMyPet(petOwner)) {
+            if (MyPetList.hasActiveMyPet(petOwner)) {
                 MyPet myPet = MyPetList.getMyPet(petOwner);
                 myPet.autoAssignSkilltree();
                 sender.sendMessage(Util.formatText(Locales.getString("Message.Command.Skills.Show", petOwner), myPet.getPetName(), (myPet.getSkillTree() == null ? "-" : myPet.getSkillTree().getDisplayName())));

@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ public class IconMenu implements Listener {
     private int size;
     private OptionClickEventHandler handler;
     private Plugin plugin;
-    private List<Inventory> inventoryList = new ArrayList<Inventory>();
+    private List<Inventory> inventoryList = new ArrayList<>();
 
     public IconMenu(String name, int size, OptionClickEventHandler handler, Plugin plugin) {
         this.size = size;
@@ -100,7 +100,7 @@ public class IconMenu implements Listener {
     @EventHandler
     void onPluginDisable(PluginDisableEvent event) {
         if (event.getPlugin().equals(plugin) && inventory != null) {
-            List<HumanEntity> viewers = new ArrayList<HumanEntity>(inventory.getMinecraftInventory().getViewers());
+            List<HumanEntity> viewers = new ArrayList<>(inventory.getMinecraftInventory().getViewers());
             for (HumanEntity viewer : viewers) {
                 viewer.closeInventory();
             }

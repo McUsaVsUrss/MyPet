@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ import de.Keyle.MyPet.api.commands.CommandOptionTabCompleter;
 import de.Keyle.MyPet.commands.CommandAdmin;
 import de.Keyle.MyPet.entity.types.MyPet;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
-import de.Keyle.MyPet.entity.types.MyPetList;
+import de.Keyle.MyPet.repository.MyPetList;
 import de.Keyle.MyPet.util.BukkitUtil;
 import de.Keyle.MyPet.util.Util;
 import de.Keyle.MyPet.util.locale.Locales;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandOptionRespawn implements CommandOptionTabCompleter {
-    private static List<String> showList = new ArrayList<String>();
+    private static List<String> showList = new ArrayList<>();
 
     static {
         showList.add("show");
@@ -56,7 +56,7 @@ public class CommandOptionRespawn implements CommandOptionTabCompleter {
         if (petOwner == null || !petOwner.isOnline()) {
             sender.sendMessage("[" + ChatColor.AQUA + "MyPet" + ChatColor.RESET + "] " + Locales.getString("Message.No.PlayerOnline", lang));
             return true;
-        } else if (!MyPetList.hasMyPet(petOwner)) {
+        } else if (!MyPetList.hasActiveMyPet(petOwner)) {
             sender.sendMessage("[" + ChatColor.AQUA + "MyPet" + ChatColor.RESET + "] " + Util.formatText(Locales.getString("Message.No.UserHavePet", lang), petOwner.getName()));
             return true;
         }

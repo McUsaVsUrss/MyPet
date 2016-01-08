@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ package de.Keyle.MyPet.commands.admin;
 import de.Keyle.MyPet.api.commands.CommandOptionTabCompleter;
 import de.Keyle.MyPet.commands.CommandAdmin;
 import de.Keyle.MyPet.entity.types.MyPet;
-import de.Keyle.MyPet.entity.types.MyPetList;
+import de.Keyle.MyPet.repository.MyPetList;
 import de.Keyle.MyPet.skill.skilltree.SkillTree;
 import de.Keyle.MyPet.skill.skilltree.SkillTreeMobType;
 import de.Keyle.MyPet.util.BukkitUtil;
@@ -50,7 +50,7 @@ public class CommandOptionSkilltree implements CommandOptionTabCompleter {
         if (petOwner == null || !petOwner.isOnline()) {
             sender.sendMessage("[" + ChatColor.AQUA + "MyPet" + ChatColor.RESET + "] " + Locales.getString("Message.No.PlayerOnline", lang));
             return true;
-        } else if (!MyPetList.hasMyPet(petOwner)) {
+        } else if (!MyPetList.hasActiveMyPet(petOwner)) {
             sender.sendMessage("[" + ChatColor.AQUA + "MyPet" + ChatColor.RESET + "] " + Util.formatText(Locales.getString("Message.No.UserHavePet", lang), petOwner.getName()));
             return true;
         }
@@ -80,11 +80,11 @@ public class CommandOptionSkilltree implements CommandOptionTabCompleter {
             if (player == null || !player.isOnline()) {
                 return CommandAdmin.emptyList;
             }
-            if (MyPetList.hasMyPet(player)) {
+            if (MyPetList.hasActiveMyPet(player)) {
                 MyPet myPet = MyPetList.getMyPet(player);
                 SkillTreeMobType skillTreeMobType = SkillTreeMobType.getMobTypeByName(myPet.getPetType().getTypeName());
 
-                List<String> skilltreeList = new ArrayList<String>();
+                List<String> skilltreeList = new ArrayList<>();
                 for (SkillTree skillTree : skillTreeMobType.getSkillTrees()) {
                     skilltreeList.add(skillTree.getName());
                 }

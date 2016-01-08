@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 package de.Keyle.MyPet.util.player;
 
+import de.Keyle.MyPet.repository.PlayerList;
 import de.Keyle.MyPet.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -27,18 +28,17 @@ import org.bukkit.OfflinePlayer;
 import java.util.UUID;
 
 public class OnlineMyPetPlayer extends MyPetPlayer {
-    protected OnlineMyPetPlayer(UUID playerUUID, UUID mojangUUID) {
+    public OnlineMyPetPlayer(UUID playerUUID, UUID mojangUUID) {
         super(playerUUID);
         this.mojangUUID = mojangUUID;
-        uuidToInternalUUID.put(mojangUUID, internalUUID);
     }
 
-    protected OnlineMyPetPlayer(UUID mojangUUID) {
+    public OnlineMyPetPlayer(UUID mojangUUID) {
         this(UUID.randomUUID(), mojangUUID);
     }
 
     public boolean isOnline() {
-        return onlinePlayerUUIDList.contains(mojangUUID);
+        return PlayerList.onlinePlayerUUIDList.contains(mojangUUID);
     }
 
     public void setLastKnownName(String name) {

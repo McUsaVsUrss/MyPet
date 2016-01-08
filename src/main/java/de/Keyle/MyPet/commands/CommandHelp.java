@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 
 package de.Keyle.MyPet.commands;
 
-import de.Keyle.MyPet.entity.types.MyPetList;
+import de.Keyle.MyPet.repository.MyPetList;
 import de.Keyle.MyPet.skill.skills.implementation.Behavior;
 import de.Keyle.MyPet.skill.skills.implementation.Inventory;
 import de.Keyle.MyPet.skill.skills.implementation.Pickup;
@@ -45,7 +45,7 @@ public class CommandHelp implements CommandExecutor {
             if (Permissions.has(player, "MyPet.admin", false)) {
                 player.sendMessage(ChatColor.GOLD + "/petadmin" + ChatColor.RESET + ": " + Locales.getString("Message.Command.Help.Admin", player));
             }
-            if (MyPetList.hasMyPet(player)) {
+            if (MyPetList.hasActiveMyPet(player)) {
                 if (Permissions.has(player, "MyPet.user.command.name")) {
                     player.sendMessage(ChatColor.GOLD + "/petname" + ChatColor.RESET + ": " + Locales.getString("Message.Command.Help.Name", player));
                 }

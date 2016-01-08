@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ package de.Keyle.MyPet.util.hooks.arenas;
 
 import de.Keyle.MyPet.MyPetPlugin;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
+import de.Keyle.MyPet.repository.PlayerList;
 import de.Keyle.MyPet.util.hooks.PluginHookManager;
 import de.Keyle.MyPet.util.locale.Locales;
 import de.Keyle.MyPet.util.logger.DebugLogger;
@@ -59,8 +60,8 @@ public class BattleArena implements Listener {
 
     @EventHandler
     public void onJoinBattleArena(ArenaPlayerEnterEvent event) {
-        if (active && DISABLE_PETS_IN_ARENA && MyPetPlayer.isMyPetPlayer(event.getPlayer().getName())) {
-            MyPetPlayer player = MyPetPlayer.getOrCreateMyPetPlayer(event.getPlayer().getPlayer());
+        if (active && DISABLE_PETS_IN_ARENA && PlayerList.isMyPetPlayer(event.getPlayer().getName())) {
+            MyPetPlayer player = PlayerList.getMyPetPlayer(event.getPlayer().getPlayer());
             if (player.hasMyPet() && player.getMyPet().getStatus() == PetState.Here) {
                 player.getMyPet().removePet(true);
                 player.getPlayer().sendMessage(Locales.getString("Message.No.AllowedHere", player.getPlayer()));

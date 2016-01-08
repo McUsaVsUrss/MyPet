@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -31,6 +31,9 @@ import de.Keyle.MyPet.entity.types.MyPet.LeashFlag;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
 import de.Keyle.MyPet.entity.types.enderman.EntityMyEnderman;
 import de.Keyle.MyPet.entity.types.rabbit.MyRabbit;
+import de.Keyle.MyPet.repository.MyPetList;
+import de.Keyle.MyPet.repository.PlayerList;
+import de.Keyle.MyPet.repository.RepositoryCallback;
 import de.Keyle.MyPet.skill.Experience;
 import de.Keyle.MyPet.skill.MonsterExperience;
 import de.Keyle.MyPet.skill.skills.implementation.*;
@@ -253,7 +256,7 @@ public class EntityListener implements Listener {
             if (MyPetType.isLeashableEntityType(event.getEntity().getType())) {
                 Player damager = (Player) event.getDamager();
 
-                if (!MyPetList.hasMyPet(damager)) {
+                if (!MyPetList.hasActiveMyPet(damager)) {
                     LivingEntity leashTarget = (LivingEntity) event.getEntity();
 
                     Class<? extends MyPet> myPetClass = MyPetType.getMyPetTypeByEntityType(leashTarget.getType()).getMyPetClass();
@@ -262,7 +265,7 @@ public class EntityListener implements Listener {
                     if (!leashItem.compare(damager.getItemInHand()) || !Permissions.has(damager, "MyPet.user.leash." + MyPetType.getMyPetTypeByEntityType(leashTarget.getType()).getTypeName())) {
                         return;
                     }
-                    if (Permissions.has(damager, "MyPet.user.capturehelper") && MyPetPlayer.isMyPetPlayer(damager) && MyPetPlayer.getOrCreateMyPetPlayer(damager).isCaptureHelperActive()) {
+                    if (Permissions.has(damager, "MyPet.user.capturehelper") && PlayerList.isMyPetPlayer(damager) && PlayerList.getMyPetPlayer(damager).isCaptureHelperActive()) {
                         CaptureHelper.checkTamable(leashTarget, event.getDamage(), damager);
                     }
                     if (PluginHookManager.isPluginUsable("Citizens")) {
@@ -346,7 +349,16 @@ public class EntityListener implements Listener {
 
                     if (willBeLeashed) {
                         event.setCancelled(true);
-                        InactiveMyPet inactiveMyPet = new InactiveMyPet(MyPetPlayer.getOrCreateMyPetPlayer(damager));
+
+                        MyPetPlayer owner;
+                        if (PlayerList.isMyPetPlayer(damager)) {
+                            owner = PlayerList.getMyPetPlayer(damager);
+                        } else {
+                            owner = PlayerList.registerMyPetPlayer(damager);
+                        }
+
+
+                        InactiveMyPet inactiveMyPet = new InactiveMyPet(owner);
                         inactiveMyPet.setPetType(MyPetType.getMyPetTypeByEntityType(leashTarget.getType()));
                         inactiveMyPet.setPetName(Locales.getString("Name." + inactiveMyPet.getPetType().getTypeName(), inactiveMyPet.getOwner().getLanguage()));
 
@@ -410,7 +422,7 @@ public class EntityListener implements Listener {
                         }
                         if (leashTarget.getWorld().getGameRuleValue("doMobLoot").equalsIgnoreCase("true") && Configuration.RETAIN_EQUIPMENT_ON_TAME && (leashTarget instanceof Zombie || leashTarget instanceof PigZombie || leashTarget instanceof Skeleton)) {
                             Random random = ((CraftLivingEntity) leashTarget).getHandle().bc();
-                            List<TagCompound> equipmentList = new ArrayList<TagCompound>();
+                            List<TagCompound> equipmentList = new ArrayList<>();
                             if (random.nextFloat() <= leashTarget.getEquipment().getChestplateDropChance()) {
                                 ItemStack itemStack = leashTarget.getEquipment().getChestplate();
                                 if (itemStack != null && itemStack.getType() != Material.AIR) {
@@ -461,22 +473,25 @@ public class EntityListener implements Listener {
                             }
                         }
 
-                        MyPet myPet = MyPetList.setMyPetActive(inactiveMyPet);
+                        final MyPet myPet = MyPetList.activateMyPet(inactiveMyPet);
                         if (myPet != null) {
-                            myPet.createPet();
+                            MyPetPlugin.getPlugin().getRepository().addMyPet(inactiveMyPet, new RepositoryCallback<Boolean>() {
+                                @Override
+                                public void callback(Boolean value) {
+                                    myPet.createPet();
 
-                            getPluginManager().callEvent(new MyPetLeashEvent(myPet));
-                            DebugLogger.info("New Pet leashed:");
-                            DebugLogger.info("   " + myPet.toString());
-                            if (Configuration.STORE_PETS_ON_PET_LEASH) {
-                                MyPetPlugin.getPlugin().saveData(false, true);
-                            }
-                            damager.sendMessage(Locales.getString("Message.Leash.Add", myPet.getOwner().getLanguage()));
+                                    getPluginManager().callEvent(new MyPetLeashEvent(myPet));
+                                    DebugLogger.info("New Pet leashed:");
+                                    DebugLogger.info("   " + myPet.toString());
 
-                            if (myPet.getOwner().isCaptureHelperActive()) {
-                                myPet.getOwner().setCaptureHelperActive(false);
-                                myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Command.CaptureHelper.Mode", myPet.getOwner()), Locales.getString("Name.Disabled", myPet.getOwner())));
-                            }
+                                    myPet.sendMessageToOwner(Locales.getString("Message.Leash.Add", myPet.getOwner().getLanguage()));
+
+                                    if (myPet.getOwner().isCaptureHelperActive()) {
+                                        myPet.getOwner().setCaptureHelperActive(false);
+                                        myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Command.CaptureHelper.Mode", myPet.getOwner()), Locales.getString("Name.Disabled", myPet.getOwner())));
+                                    }
+                                }
+                            });
                         }
                     }
                 }
@@ -573,7 +588,7 @@ public class EntityListener implements Listener {
                         return;
                     }
                 }
-                if (MyPetList.hasMyPet(player)) {
+                if (MyPetList.hasActiveMyPet(player)) {
                     MyPet myPet = MyPetList.getMyPet(player);
                     if (myPet.getStatus() == PetState.Here && damagedEntity != myPet.getCraftPet()) {
                         myPet.getCraftPet().getHandle().goalTarget = ((CraftLivingEntity) damagedEntity).getHandle();
@@ -662,7 +677,9 @@ public class EntityListener implements Listener {
                 return;
             }
 
-            if (Configuration.RELEASE_PETS_ON_DEATH && !myPet.getOwner().isMyPetAdmin()) {
+            final MyPetPlayer owner = myPet.getOwner();
+
+            if (Configuration.RELEASE_PETS_ON_DEATH && !owner.isMyPetAdmin()) {
                 if (myPet.getSkills().isSkillActive(Inventory.class)) {
                     CustomInventory inv = myPet.getSkills().getSkill(Inventory.class).inv;
                     inv.dropContentAt(myPet.getLocation());
@@ -680,14 +697,19 @@ public class EntityListener implements Listener {
                 }
 
                 myPet.removePet();
-                myPet.getOwner().setMyPetForWorldGroup(WorldGroup.getGroupByWorld(myPet.getOwner().getPlayer().getWorld().getName()).getName(), null);
+                owner.setMyPetForWorldGroup(WorldGroup.getGroupByWorld(owner.getPlayer().getWorld().getName()).getName(), null);
 
-                myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Command.Release.Dead", myPet.getOwner()), myPet.getPetName()));
-                MyPetList.removeInactiveMyPet(MyPetList.setMyPetInactive(myPet.getOwner()));
-                DebugLogger.info(myPet.getOwner().getName() + " released pet (dead).");
-                if (Configuration.STORE_PETS_ON_PET_RELEASE) {
-                    MyPetPlugin.getPlugin().saveData(false, true);
-                }
+                myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Command.Release.Dead", owner), myPet.getPetName()));
+
+                MyPetList.deactivateMyPet(owner);
+                MyPetPlugin.getPlugin().getRepository().removeMyPet(myPet.getUUID(), new RepositoryCallback<Boolean>() {
+                    @Override
+                    public void callback(Boolean value) {
+                        DebugLogger.info(owner.getName() + " released pet (dead).");
+                    }
+                });
+
+
                 return;
             }
 
@@ -740,21 +762,21 @@ public class EntityListener implements Listener {
             if (myPet.getSkills().isSkillActive(Inventory.class)) {
                 Inventory inventorySkill = myPet.getSkills().getSkill(Inventory.class);
                 inventorySkill.closeInventory();
-                if (inventorySkill.dropOnDeath() && !myPet.getOwner().isMyPetAdmin()) {
+                if (inventorySkill.dropOnDeath() && !owner.isMyPetAdmin()) {
                     inventorySkill.inv.dropContentAt(myPet.getLocation());
                 }
             }
             sendDeathMessage(event);
-            myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Spawn.Respawn.In", myPet.getOwner().getPlayer()), myPet.getPetName(), myPet.getRespawnTime()));
+            myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Spawn.Respawn.In", owner.getPlayer()), myPet.getPetName(), myPet.getRespawnTime()));
 
-            if (Economy.canUseEconomy() && myPet.getOwner().hasAutoRespawnEnabled() && myPet.getRespawnTime() >= myPet.getOwner().getAutoRespawnMin() && Permissions.has(myPet.getOwner().getPlayer(), "MyPet.user.respawn")) {
+            if (Economy.canUseEconomy() && owner.hasAutoRespawnEnabled() && myPet.getRespawnTime() >= owner.getAutoRespawnMin() && Permissions.has(owner.getPlayer(), "MyPet.user.respawn")) {
                 double costs = myPet.getRespawnTime() * Configuration.RESPAWN_COSTS_FACTOR + Configuration.RESPAWN_COSTS_FIXED;
-                if (Economy.canPay(myPet.getOwner(), costs)) {
-                    Economy.pay(myPet.getOwner(), costs);
-                    myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Command.Respawn.Paid", myPet.getOwner().getPlayer()), myPet.getPetName(), costs + " " + Economy.getEconomy().currencyNameSingular()));
+                if (Economy.canPay(owner, costs)) {
+                    Economy.pay(owner, costs);
+                    myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Command.Respawn.Paid", owner.getPlayer()), myPet.getPetName(), costs + " " + Economy.getEconomy().currencyNameSingular()));
                     myPet.setRespawnTime(1);
                 } else {
-                    myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Command.Respawn.NoMoney", myPet.getOwner().getPlayer()), myPet.getPetName(), costs + " " + Economy.getEconomy().currencyNameSingular()));
+                    myPet.sendMessageToOwner(Util.formatText(Locales.getString("Message.Command.Respawn.NoMoney", owner.getPlayer()), myPet.getPetName(), costs + " " + Economy.getEconomy().currencyNameSingular()));
                 }
             }
         }
@@ -793,7 +815,7 @@ public class EntityListener implements Listener {
                     }
                 } else if (entity instanceof Player) {
                     Player owner = (Player) entity;
-                    if (MyPetList.hasMyPet(owner)) {
+                    if (MyPetList.hasActiveMyPet(owner)) {
                         MyPet myPet = MyPetList.getMyPet(owner);
                         if (Configuration.PREVENT_LEVELLING_WITHOUT_SKILLTREE && myPet.getSkillTree() == null) {
                             if (!myPet.autoAssignSkilltree()) {
@@ -827,7 +849,7 @@ public class EntityListener implements Listener {
                 myPet.getExperience().addExp(edbee.getEntity().getType());
             } else if (damager instanceof Player) {
                 Player owner = (Player) damager;
-                if (MyPetList.hasMyPet(owner)) {
+                if (MyPetList.hasActiveMyPet(owner)) {
                     MyPet myPet = MyPetList.getMyPet(owner);
                     if (Configuration.PREVENT_LEVELLING_WITHOUT_SKILLTREE && myPet.getSkillTree() == null) {
                         if (!myPet.autoAssignSkilltree()) {

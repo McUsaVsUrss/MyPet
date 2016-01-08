@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 package de.Keyle.MyPet.listeners;
 
 import de.Keyle.MyPet.api.entity.MyPetEntity;
-import de.Keyle.MyPet.entity.types.MyPetList;
+import de.Keyle.MyPet.repository.MyPetList;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,7 +33,7 @@ public class VehicleListener implements Listener {
     public void onVehicleEnter(final VehicleEnterEvent event) {
         if (event.getEntered() instanceof Player && !(event.getVehicle() instanceof Horse)) {
             Player player = (Player) event.getEntered();
-            if (MyPetList.hasMyPet(player)) {
+            if (MyPetList.hasActiveMyPet(player)) {
                 MyPetList.getMyPet(player).removePet(true);
             }
         }

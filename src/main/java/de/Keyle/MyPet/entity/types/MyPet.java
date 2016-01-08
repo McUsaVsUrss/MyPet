@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -55,13 +55,13 @@ import java.util.*;
 import static org.bukkit.Bukkit.getServer;
 
 public abstract class MyPet implements IMyPet, NBTStorage {
-    private static Map<Class<? extends MyPet>, Double> startHP = new HashMap<Class<? extends MyPet>, Double>();
-    private static Map<Class<? extends MyPet>, Double> startSpeed = new HashMap<Class<? extends MyPet>, Double>();
+    private static Map<Class<? extends MyPet>, Double> startHP = new HashMap<>();
+    private static Map<Class<? extends MyPet>, Double> startSpeed = new HashMap<>();
     private static ArrayListMultimap<Class<? extends MyPet>, ConfigItem> food = ArrayListMultimap.create();
     private static ArrayListMultimap<Class<? extends MyPet>, LeashFlag> leashFlags = ArrayListMultimap.create();
-    private static Map<Class<? extends MyPet>, Integer> customRespawnTimeFactor = new HashMap<Class<? extends MyPet>, Integer>();
-    private static Map<Class<? extends MyPet>, Integer> customRespawnTimeFixed = new HashMap<Class<? extends MyPet>, Integer>();
-    private static Map<Class<? extends MyPet>, ConfigItem> leashItem = new HashMap<Class<? extends MyPet>, ConfigItem>();
+    private static Map<Class<? extends MyPet>, Integer> customRespawnTimeFactor = new HashMap<>();
+    private static Map<Class<? extends MyPet>, Integer> customRespawnTimeFixed = new HashMap<>();
+    private static Map<Class<? extends MyPet>, ConfigItem> leashItem = new HashMap<>();
     protected final MyPetPlayer petOwner;
     protected CraftMyPet craftMyPet;
     protected String petName = "Pet";
@@ -230,6 +230,10 @@ public abstract class MyPet implements IMyPet, NBTStorage {
 
     public void setRespawnTime(int time) {
         respawnTime = time > 0 ? time : 0;
+
+        if (respawnTime > 0) {
+            status = PetState.Dead;
+        }
     }
 
     public boolean autoAssignSkilltree() {
@@ -299,6 +303,10 @@ public abstract class MyPet implements IMyPet, NBTStorage {
 
     public void setUUID(UUID uuid) {
         this.uuid = uuid;
+    }
+
+    public void setLastUsed(long date) {
+        this.lastUsed = date;
     }
 
     @Override
@@ -453,6 +461,10 @@ public abstract class MyPet implements IMyPet, NBTStorage {
         if (petOwner.isOnline()) {
             petOwner.getPlayer().sendMessage(text);
         }
+    }
+
+    public void setWantsToRespawn(boolean wantsToRespawn) {
+        this.wantsToRespawn = wantsToRespawn;
     }
 
     public boolean wantToRespawn() {

@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ package de.Keyle.MyPet.commands;
 
 import de.Keyle.MyPet.entity.types.MyPet;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
-import de.Keyle.MyPet.entity.types.MyPetList;
+import de.Keyle.MyPet.repository.MyPetList;
 import de.Keyle.MyPet.util.Configuration;
 import de.Keyle.MyPet.util.Util;
 import de.Keyle.MyPet.util.hooks.Economy;
@@ -39,8 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandRespawn implements CommandExecutor, TabCompleter {
-    private static List<String> optionsList = new ArrayList<String>();
-    private static List<String> emptyList = new ArrayList<String>();
+    private static List<String> optionsList = new ArrayList<>();
+    private static List<String> emptyList = new ArrayList<>();
 
     static {
         optionsList.add("show");
@@ -51,7 +51,7 @@ public class CommandRespawn implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player petOwner = (Player) sender;
-            if (MyPetList.hasMyPet(petOwner)) {
+            if (MyPetList.hasActiveMyPet(petOwner)) {
                 MyPet myPet = MyPetList.getMyPet(petOwner);
                 if (!Economy.canUseEconomy() || !Permissions.has(petOwner, "MyPet.user.command.respawn")) {
                     myPet.sendMessageToOwner(Locales.getString("Message.No.CanUse", petOwner));

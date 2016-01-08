@@ -1,15 +1,15 @@
 /*
- * This file is part of MyPet-1.8
+ * This file is part of MyPet
  *
- * Copyright (C) 2011-2015 Keyle
- * MyPet-1.8 is licensed under the GNU Lesser General Public License.
+ * Copyright (C) 2011-2016 Keyle
+ * MyPet is licensed under the GNU Lesser General Public License.
  *
- * MyPet-1.8 is free software: you can redistribute it and/or modify
+ * MyPet is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyPet-1.8 is distributed in the hope that it will be useful,
+ * MyPet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
@@ -32,6 +32,7 @@ public class DonateCheck {
         Translator(ChatColor.GOLD + "✈ " + ChatColor.UNDERLINE + "Translator" + ChatColor.RESET + ChatColor.GOLD + " ✈" + ChatColor.RESET),
         Developer(ChatColor.GOLD + "✪ " + ChatColor.UNDERLINE + "Developer" + ChatColor.RESET + ChatColor.GOLD + " ✪" + ChatColor.RESET),
         Helper(ChatColor.GOLD + "☘ " + ChatColor.UNDERLINE + "Helper" + ChatColor.RESET + ChatColor.GOLD + " ☘" + ChatColor.RESET),
+        Premium(ChatColor.GOLD + "$ " + ChatColor.UNDERLINE + "Premium" + ChatColor.RESET + ChatColor.GOLD + " $" + ChatColor.RESET),
         None("");
 
         String displayText;
@@ -56,6 +57,7 @@ public class DonateCheck {
             //   3 for translator
             //   4 for helper
             //   5 for creator
+            //   6 for premium
             // no data will be saved on the server
             String mode;
             if (Bukkit.getOnlineMode()) {
@@ -64,16 +66,19 @@ public class DonateCheck {
                 mode = "username=" + player.getName();
             }
             String donation = Util.readUrlContent("http://donation.keyle.de/donated.php?" + mode);
-            if (donation.equals("1")) {
-                return DonationRank.Donator;
-            } else if (donation.equals("2")) {
-                return DonationRank.Developer;
-            } else if (donation.equals("3")) {
-                return DonationRank.Translator;
-            } else if (donation.equals("4")) {
-                return DonationRank.Helper;
-            } else if (donation.equals("5")) {
-                return DonationRank.Creator;
+            switch (donation) {
+                case "1":
+                    return DonationRank.Donator;
+                case "2":
+                    return DonationRank.Developer;
+                case "3":
+                    return DonationRank.Translator;
+                case "4":
+                    return DonationRank.Helper;
+                case "5":
+                    return DonationRank.Creator;
+                case "6":
+                    return DonationRank.Premium;
             }
         } catch (Exception e) {
             DebugLogger.info("Can not connect to donation server.");

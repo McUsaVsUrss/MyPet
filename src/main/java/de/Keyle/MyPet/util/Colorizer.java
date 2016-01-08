@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Colorizer {
-    private static Map<String, String> colorCodes = new HashMap<String, String>();
+    private static Map<String, String> colorCodes = new HashMap<>();
 
     public static String setColors(String text) {
         for (String color : colorCodes.keySet()) {

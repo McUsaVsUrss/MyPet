@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -23,7 +23,8 @@ package de.Keyle.MyPet.util;
 import de.Keyle.MyPet.MyPetPlugin;
 import de.Keyle.MyPet.api.util.IScheduler;
 import de.Keyle.MyPet.entity.types.MyPet;
-import de.Keyle.MyPet.entity.types.MyPetList;
+import de.Keyle.MyPet.repository.MyPetList;
+import de.Keyle.MyPet.repository.PlayerList;
 import de.Keyle.MyPet.util.logger.DebugLogger;
 import de.Keyle.MyPet.util.player.MyPetPlayer;
 import org.bukkit.Bukkit;
@@ -32,8 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Timer {
-    private static List<Integer> timerIDs = new ArrayList<Integer>();
-    private static final List<IScheduler> tasksToSchedule = new ArrayList<IScheduler>();
+    private static List<Integer> timerIDs = new ArrayList<>();
+    private static final List<IScheduler> tasksToSchedule = new ArrayList<>();
 
     private Timer() {
     }
@@ -68,7 +69,7 @@ public class Timer {
         }, 5L, 20L));
         timerIDs.add(Bukkit.getScheduler().scheduleSyncRepeatingTask(MyPetPlugin.getPlugin(), new Runnable() {
             public void run() {
-                for (MyPetPlayer player : MyPetPlayer.getMyPetPlayers()) {
+                for (MyPetPlayer player : PlayerList.getMyPetPlayers()) {
                     player.schedule();
                 }
             }

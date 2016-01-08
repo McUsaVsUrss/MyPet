@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandPetType implements CommandExecutor, TabCompleter {
-    private static List<String> petTypeList = new ArrayList<String>();
+    private static List<String> petTypeList = new ArrayList<>();
 
     static {
         for (MyPetType petType : MyPetType.values()) {

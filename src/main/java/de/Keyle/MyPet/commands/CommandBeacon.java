@@ -1,7 +1,7 @@
 /*
  * This file is part of MyPet
  *
- * Copyright (C) 2011-2014 Keyle
+ * Copyright (C) 2011-2016 Keyle
  * MyPet is licensed under the GNU Lesser General Public License.
  *
  * MyPet is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ package de.Keyle.MyPet.commands;
 
 import de.Keyle.MyPet.entity.types.MyPet;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
-import de.Keyle.MyPet.entity.types.MyPetList;
+import de.Keyle.MyPet.repository.MyPetList;
 import de.Keyle.MyPet.skill.skills.implementation.Beacon;
 import de.Keyle.MyPet.util.Util;
 import de.Keyle.MyPet.util.hooks.Permissions;
@@ -37,12 +37,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandBeacon implements CommandExecutor, TabCompleter {
-    private static List<String> emptyList = new ArrayList<String>();
+    private static List<String> emptyList = new ArrayList<>();
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (MyPetList.hasMyPet(player)) {
+            if (MyPetList.hasActiveMyPet(player)) {
                 MyPet myPet = MyPetList.getMyPet(player);
                 if (!Permissions.hasExtended(player, "MyPet.user.extended.Beacon", true)) {
                     myPet.sendMessageToOwner(Locales.getString("Message.No.CanUse", player));
